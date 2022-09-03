@@ -8,3 +8,7 @@ export interface TodoListItem {
     name: string;
     projectId: number;
 }
+
+export function emptyTodoList(): TodoList {
+    return { date: new Date(), todoListItems: [] };
+}

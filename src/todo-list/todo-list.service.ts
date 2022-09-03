@@ -2,7 +2,7 @@ import { Task, TodoistApi } from '@doist/todoist-api-typescript';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ENV_VARIABLES } from '../env/env';
-import { TodoList } from './todo-list';
+import { emptyTodoList, TodoList } from './todo-list';
 
 @Injectable()
 export class TodoListService {
@@ -15,14 +15,15 @@ export class TodoListService {
         this.todoistApi = new TodoistApi(token);
     }
 
-    public async getCurrentDayTodoList() {
+    public async getCurrentDayTodoList(): Promise<TodoList> {
         this.logger.log("getting current days todo list")
         try {
             let tasks = await this.todoistApi.getTasks({ "filter": "today" }) as Task[];
             let todoList = this.mapTaskstoTodoList(tasks);
-            console.log(todoList);
+            return todoList;
         } catch (error) {
             this.logger.error(error);
+            return emptyTodoList();
         }
     }
 
