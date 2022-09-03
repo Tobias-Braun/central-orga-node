@@ -1,9 +1,10 @@
-interface TodoList {
+export class TodoList {
     date: Date;
-    todoListItem: TodoListItem[];
+    todoListItems: TodoListItem[];
 }
 
-interface TodoListItem {
+export interface TodoListItem {
+    id: number;
     name: string;
-    project: string;
+    projectId: number;
 }
