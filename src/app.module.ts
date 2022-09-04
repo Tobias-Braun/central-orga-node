@@ -8,7 +8,6 @@ import env from './config/dev';
 import { ENV_VARIABLES } from './env/env';
 import { TodoListModule } from './todo-list/todo-list.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TaskCompletionService } from './task-completion/task-completion.service';
 import { TaskCompletionModule } from './task-completion/task-completion.module';
 import { PiholeModule } from './pihole/pihole.module';
 
