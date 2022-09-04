@@ -10,6 +10,7 @@ import { TodoListModule } from './todo-list/todo-list.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskCompletionService } from './task-completion/task-completion.service';
 import { TaskCompletionModule } from './task-completion/task-completion.module';
+import { PiholeModule } from './pihole/pihole.module';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { TaskCompletionModule } from './task-completion/task-completion.module';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => config.get(ENV_VARIABLES.database),
       inject: [ConfigService],
-    }), TodoListModule, TaskCompletionModule],
+    }), TodoListModule, TaskCompletionModule, PiholeModule],
   controllers: [AppController],
   providers: [AppService],
 })
