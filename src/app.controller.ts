@@ -1,10 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { TodoListService } from './todo-list/todo-list.service';
+import { TodoistService } from './todoist/todoist.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService, private readonly todoListService: TodoListService) { }
+  constructor(private readonly appService: AppService, private readonly todoListService: TodoistService) { }
 
   @Get()
   async getHello(): Promise<string> {

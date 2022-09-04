@@ -5,10 +5,10 @@ import { ENV_VARIABLES } from '../env/env';
 import { emptyTodoList, TodoList } from './todo-list';
 
 @Injectable()
-export class TodoListService {
+export class TodoistService {
 
     private todoistApi: TodoistApi;
-    private readonly logger = new Logger(TodoListService.name);
+    private readonly logger = new Logger(TodoistService.name);
 
     constructor(private readonly configService: ConfigService) {
         const token = this.configService.get(ENV_VARIABLES.todoist_token);
@@ -28,7 +28,8 @@ export class TodoListService {
     }
 
     private mapTaskstoTodoList(taskList: Task[]): TodoList {
-        const todoListItems = taskList.map(task => ({
+        const todoListItems = taskList.filter(task => !task.completed)
+        .map(task => ({
             id: task.id,
             name: task.content,
             projectId: task.projectId,
