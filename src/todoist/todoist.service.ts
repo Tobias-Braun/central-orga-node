@@ -2,7 +2,7 @@ import { Task, TodoistApi } from '@doist/todoist-api-typescript';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ENV_VARIABLES } from '../env/env';
-import { emptyTodoList, TodoList } from './todo-list';
+import { emptyTodoList, TodoList, TodoListItem } from '../todo-list/todo-list.entity';
 
 @Injectable()
 export class TodoistService {
@@ -19,7 +19,7 @@ export class TodoistService {
         this.logger.log("getting current days todo list")
         try {
             let tasks = await this.todoistApi.getTasks({ "filter": "today" }) as Task[];
-            let todoList = this.mapTaskstoTodoList(tasks);
+            let todoList = mapTaskstoTodoList(tasks);
             return todoList;
         } catch (error) {
             this.logger.error(error);
@@ -27,14 +27,32 @@ export class TodoistService {
         }
     }
 
-    private mapTaskstoTodoList(taskList: Task[]): TodoList {
-        const todoListItems = taskList.filter(task => !task.completed)
-        .map(task => ({
-            id: task.id,
-            name: task.content,
-            projectId: task.projectId,
-        }));
-        const today = new Date();
-        return ({ date: today, todoListItems: todoListItems });
+    public async getCompletedForTodoList(todoList: TodoList): Promise<TodoListItem[]> {
+        const taskIds = todoList.todoListItems.map(item => parseInt(item.id));
+        this.logger.log(`getting updated info for todoList of ${todoList.dateString}`)
+        try {
+            let tasks = await Promise.all(taskIds.map(taskId => this.todoistApi.getTask(taskId)));
+            tasks = tasks.filter(task => task.completed);
+            let todoListItems = mapTaskListToTodoListItems(tasks);
+            return todoListItems;
+        } catch (error) {
+            this.logger.error(error);
+            return [];
+        }
     }
+}
+
+function mapTaskListToTodoListItems(taskList: Task[]): TodoListItem[] {
+    return taskList.map(task => ({
+        id: String(task.id),
+        name: task.content,
+        projectId: String(task.projectId),
+    }));
+}
+
+function mapTaskstoTodoList(taskList: Task[]): TodoList {
+    let todoList = emptyTodoList();
+    const todoListItems = this.mapTaskListToTodoListItems(taskList);
+    todoList.todoListItems = todoListItems;
+    return todoList;
 }
