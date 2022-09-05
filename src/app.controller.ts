@@ -10,19 +10,7 @@ export class AppController {
 
   @Get()
   async getHello(): Promise<string> {
-    let todoList = await this.todoListService.findForToday();
-    return JSON.stringify(todoList);
+    return "hello";
   }
 
-  @Get("/update")
-  async getUpdate(): Promise<string> {
-    let difference = await this.todoListService.getDifferenceForToday();
-    return `tasks not done: ${difference}`;
-  }
-
-  @Get("/pihole")
-  async getPiHole(): Promise<string> {
-    await this.piholeService.activateBlockList();
-    return "block list activated";
-  }
 }

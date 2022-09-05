@@ -15,10 +15,10 @@ export class TodoistService {
         this.todoistApi = new TodoistApi(token);
     }
 
-    public async getCurrentDayTodoList(): Promise<TodoList> {
+    public async getTodoListForDateString(dateString: string): Promise<TodoList> {
         this.logger.log("getting current days todo list")
         try {
-            let tasks = await this.todoistApi.getTasks({ "filter": "today" }) as Task[];
+            let tasks = await this.todoistApi.getTasks({ "filter": dateString }) as Task[];
             let todoList = mapTaskstoTodoList(tasks);
             return todoList;
         } catch (error) {
@@ -52,7 +52,7 @@ function mapTaskListToTodoListItems(taskList: Task[]): TodoListItem[] {
 
 function mapTaskstoTodoList(taskList: Task[]): TodoList {
     let todoList = emptyTodoList();
-    const todoListItems = this.mapTaskListToTodoListItems(taskList);
+    const todoListItems = mapTaskListToTodoListItems(taskList);
     todoList.todoListItems = todoListItems;
     return todoList;
 }

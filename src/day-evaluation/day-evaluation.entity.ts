@@ -6,7 +6,7 @@ export class DayEvaluation {
     @PrimaryGeneratedColumn()
     id?: number;
 
-    @Column({ type: "date" })
+    @Column({ type: "date", unique: true })
     dateString: string;
 
     @Column()

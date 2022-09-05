@@ -5,9 +5,11 @@ import { TaskCompletionService } from './task-completion.service';
 import { ConfigModule } from '@nestjs/config';
 import { DayEvaluation } from '../day-evaluation/day-evaluation.entity';
 import { DayEvaluationModule } from '../day-evaluation/day-evaluation.module';
+import { BlockingStatus } from '../blocking-status/blocking-status.entity';
+import { BlockingStatusModule } from '../blocking-status/blocking-status.module';
 
 @Module({
-    imports: [TodoListModule, PiholeModule, ConfigModule, DayEvaluationModule],
+    imports: [TodoListModule, PiholeModule, ConfigModule, DayEvaluationModule, BlockingStatusModule],
     providers: [TaskCompletionService],
     exports: [TaskCompletionService],
 })

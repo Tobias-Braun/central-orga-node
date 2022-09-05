@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { exec, ExecException } from 'child_process';
+import { ChildProcess, exec, ExecException } from 'child_process';
 import { blockDomains, domainRegex } from './blocklist';
 
 @Injectable()
@@ -29,12 +29,13 @@ export class PiholeService {
         return Promise.resolve();
     }
 
-    async deactivateBlockList() {
+    async deactivateBlockList(): Promise<ChildProcess[]> {
         this.logger.log("deactivating pihole blocklist");
-        blockDomains.forEach(async (domain) => this.runSafe(domain, async (domain) => {
+        let promises = blockDomains.map(async (domain) => this.runSafe(domain, async (domain) => {
             let command = this.removeFromBlockList(domain);
-            await exec(command, this.execHandler);
+            return exec(command, this.execHandler);
         }));
+        return Promise.all(promises);
     }
 
     private addToBlockListCommand(domain: string) {

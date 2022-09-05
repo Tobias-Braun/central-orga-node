@@ -16,6 +16,7 @@ export class BlockingStatusService {
     async getBlockingStatus(): Promise<BlockingStatus> {
         try {
             let blockingStatus = await this.blockingStatusRepository.findOneBy({ id: 1 });
+            if (blockingStatus === null) throw Error("no blocking status found");
             return blockingStatus;
         } catch (error) {
             this.logger.error("couldn't find blocking status, creating new default one");

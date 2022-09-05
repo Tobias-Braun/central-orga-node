@@ -5,7 +5,7 @@ export class TodoList {
     @PrimaryGeneratedColumn()
     id?: string;
 
-    @Column({ type: "date" })
+    @Column({ type: "date", unique: true })
     dateString: string;
 
     @OneToMany(() => TodoListItem, (todoListItem) => todoListItem.todoList, {

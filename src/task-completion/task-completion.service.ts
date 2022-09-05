@@ -6,6 +6,9 @@ import { setTimeout } from 'timers/promises';
 import { ConfigService } from '@nestjs/config';
 import { ENV_VARIABLES } from '../env/env';
 import { DayEvaluationService } from '../day-evaluation/day-evaluation.service';
+import { BlockingStatusService } from '../blocking-status/blocking-status.service';
+import { BlockingStatus } from '../blocking-status/blocking-status.entity';
+import { currentDateAsDateString } from '../todo-list/todo-list.entity';
 import { DayEvaluation } from '../day-evaluation/day-evaluation.entity';
 
 @Injectable()
@@ -18,52 +21,83 @@ export class TaskCompletionService {
         private readonly piholeService: PiholeService,
         private readonly configService: ConfigService,
         private readonly dayEvaluationService: DayEvaluationService,
+        private readonly blockingStatusService: BlockingStatusService,
     ) { }
 
     @Cron('0 6 * * * ')
-    savePlannedTodoListForToday() {
+    runPlannedTasksCheck() {
         this.logger.log("getting planned todo list for today");
-        this.todoListService.findForToday();
+        let todayString = currentDateAsDateString();
+        this.todoListService.loadPlannedTasksForDateString(todayString);
     }
 
     @Cron('55 23 * * *')
-    async checkDifferenceBetweenPlannedAndCompletedTasks() {
+    async runDifferenceCheck() {
         this.logger.log("checking the difference between planned and completed tasks");
-        let difference = await this.todoListService.getDifferenceForToday();
-        this.logger.log(`difference: ${difference}`);
-        if (difference > 0) {
-            this.logger.log("not all tasks completed, initiating entertainment block");
-            this.addPiholeBlock(difference);
+        let dateString = currentDateAsDateString();
+        try {
+            let difference = await this.todoListService.getDifferenceForDateString(dateString);
+            let numberOfUncompletedTasks = Math.max(difference, 0);
+            let shouldActivateBlocking = numberOfUncompletedTasks > 0;
+            let blockTimeInMs = this.getBlockTimeInMs(numberOfUncompletedTasks);
+            let dayEvaluation: DayEvaluation = { dateString, numberOfUncompletedTasks, shouldActivateBlocking, blockTimeInMs };
+            this.dayEvaluationService.addDayEvaluation(dayEvaluation);
+        } catch (error) {
+            this.logger.error("error running difference check: " + String(error));
         }
+
     }
 
-    private getBlockTimeInMs(difference: number) {
-        return Math.min(
-            this.configService.get(ENV_VARIABLES.blockTimePerUncompletedTask) * difference,
-            this.configService.get(ENV_VARIABLES.maxBlockTime)
-        ) * 1000; // * 1000 because we convert seconds to milliseconds
-    }
-
-    async addPiholeBlock(difference: number) {
+    @Cron('0 8 * * *')
+    async runAddBlockCheck() {
+        this.logger.log("not all tasks completed, initiating entertainment block");
         let yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         let yesterdayString = yesterday.toISOString().slice(0, 10);
         try {
             let dayEvaluation = await this.dayEvaluationService.getDayEvaluationForDateString(yesterdayString);
             if (dayEvaluation.shouldActivateBlocking) {
-                this.piholeService.activateBlockList();
+                await this.piholeService.activateBlockList();
+                this.blockingStatusService.updateBlockingStatus(BlockingStatus.ON);
                 this.scheduleRemovePiholeBlock(dayEvaluation.blockTimeInMs);
             }
 
 
         } catch (error) {
-            this.logger.error("cant get day evaluation for yesterday, quitting evaluation without block");
+            this.logger.error("cant get day evaluation for yesterday, quitting evaluation without block, error: " + error);
         }
     }
+
+    @Cron('0 2 * * *')
+    async runRemoveBlockCheck() {
+        try {
+            let blockingStatus = await this.blockingStatusService.getBlockingStatus();
+            if (blockingStatus.blockIsActive) {
+                await this.scheduleRemovePiholeBlock(0);
+
+            }
+        } catch (error) {
+            this.logger.error("Can't check current blocking status", error);
+        }
+    }
+
+    private getBlockTimeInMs(numberOfUncompletedTasks: number) {
+        return Math.min(
+            this.configService.get(ENV_VARIABLES.blockTimePerUncompletedTask) * numberOfUncompletedTasks,
+            this.configService.get(ENV_VARIABLES.maxBlockTime)
+        ) * 1000; // * 1000 because we convert seconds to milliseconds
+    }
+
 
     async scheduleRemovePiholeBlock(timeout: number) {
         await setTimeout(timeout);
         this.logger.log("removing pihole block");
-        this.piholeService.deactivateBlockList();
+        try {
+            await this.piholeService.deactivateBlockList();
+            this.blockingStatusService.updateBlockingStatus(BlockingStatus.OFF);
+        } catch (error) {
+            this.logger.error("failed async call to service:", error);
+        }
+
     }
 }

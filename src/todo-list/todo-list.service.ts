@@ -21,16 +21,20 @@ export class TodoListService {
         return this.todoListRepository.find();
     }
 
-    async findForToday(): Promise<TodoList> {
-        let dateString = currentDateAsDateString();
-        let todoList = await this.todoListRepository.findOneBy({ dateString: dateString });
-        if (todoList !== null) {
-            return todoList;
-        }
+    async loadPlannedTasksForDateString(dateString: string): Promise<TodoList> {
         this.logger.log("Trying to fetch current days todo list from todoist")
         try {
-            let fromTodoist = await this.todoistService.getCurrentDayTodoList();
-            this.todoListRepository.save(fromTodoist);
+            let fromTodoist = await this.todoistService.getTodoListForDateString(dateString);
+            this.logger.log("fetched from todoist: " + JSON.stringify(fromTodoist));
+            let existingEntry = await this.todoListRepository.findOneBy({ dateString: fromTodoist.dateString });
+            if (existingEntry !== null) {
+                // update entry
+                await Promise.all(existingEntry.todoListItems.map(item => this.todoListItemRepository.update({ id: item.id }, item)));
+                this.todoListRepository.update({ dateString: fromTodoist.dateString }, { dateString: existingEntry.dateString, id: existingEntry.id });
+            } else {
+                // save entry
+                this.todoListRepository.save(fromTodoist);
+            }
             return fromTodoist;
         } catch (error) {
             this.logger.error(error)
@@ -38,8 +42,12 @@ export class TodoListService {
         }
     }
 
-    async getDifferenceForToday(): Promise<number> {
-        let currentTodoList = await this.findForToday();
+    async getDifferenceForDateString(dateString: string): Promise<number> {
+        let currentTodoList = await this.todoListRepository.findOneBy({ dateString });
+        if (currentTodoList === null) {
+            this.logger.error("Cant get planned Tasks for today, treating difference as 0");
+            return Promise.resolve(0);
+        }
         let completedItems = await this.todoistService.getCompletedForTodoList(currentTodoList);
         return currentTodoList.todoListItems.length - completedItems.length;
     }
