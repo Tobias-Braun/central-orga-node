@@ -12,6 +12,7 @@ import { TaskCompletionModule } from './task-completion/task-completion.module';
 import { PiholeModule } from './pihole/pihole.module';
 import { DayEvaluationService } from './day-evaluation/day-evaluation.service';
 import { DayEvaluationModule } from './day-evaluation/day-evaluation.module';
+import { BlockingStatusModule } from './blocking-status/blocking-status.module';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { DayEvaluationModule } from './day-evaluation/day-evaluation.module';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => config.get(ENV_VARIABLES.database),
       inject: [ConfigService],
-    }), TodoListModule, TaskCompletionModule, PiholeModule, DayEvaluationModule],
+    }), TodoListModule, TaskCompletionModule, PiholeModule, DayEvaluationModule, BlockingStatusModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -5,13 +5,20 @@ import { PiholeService } from '../pihole/pihole.service';
 import { setTimeout } from 'timers/promises';
 import { ConfigService } from '@nestjs/config';
 import { ENV_VARIABLES } from '../env/env';
+import { DayEvaluationService } from '../day-evaluation/day-evaluation.service';
+import { DayEvaluation } from '../day-evaluation/day-evaluation.entity';
 
 @Injectable()
 export class TaskCompletionService {
 
     private readonly logger = new Logger(TaskCompletionService.name);
 
-    constructor(private readonly todoListService: TodoListService, private readonly piholeService: PiholeService, private readonly configService: ConfigService) { }
+    constructor(
+        private readonly todoListService: TodoListService,
+        private readonly piholeService: PiholeService,
+        private readonly configService: ConfigService,
+        private readonly dayEvaluationService: DayEvaluationService,
+    ) { }
 
     @Cron('0 6 * * * ')
     savePlannedTodoListForToday() {
@@ -38,16 +45,24 @@ export class TaskCompletionService {
     }
 
     async addPiholeBlock(difference: number) {
-        await this.piholeService.activateBlockList();
-        const blockTime = this.getBlockTimeInMs(difference);
-        console.log("blockTime", blockTime);
-        this.scheduleRemovePiholeBlock(blockTime);
+        let yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        let yesterdayString = yesterday.toISOString().slice(0, 10);
+        try {
+            let dayEvaluation = await this.dayEvaluationService.getDayEvaluationForDateString(yesterdayString);
+            if (dayEvaluation.shouldActivateBlocking) {
+                this.piholeService.activateBlockList();
+                this.scheduleRemovePiholeBlock(dayEvaluation.blockTimeInMs);
+            }
+
+
+        } catch (error) {
+            this.logger.error("cant get day evaluation for yesterday, quitting evaluation without block");
+        }
     }
 
     async scheduleRemovePiholeBlock(timeout: number) {
-        console.log("in scheduleRemovePiholeBlock");
         await setTimeout(timeout);
-        console.log("removing pihole block");
         this.logger.log("removing pihole block");
         this.piholeService.deactivateBlockList();
     }

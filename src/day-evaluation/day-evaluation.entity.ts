@@ -16,5 +16,5 @@ export class DayEvaluation {
     shouldActivateBlocking: boolean;
 
     @Column()
-    blockTime: number;
+    blockTimeInMs: number;
 }
