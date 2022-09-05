@@ -10,6 +10,8 @@ import { TodoListModule } from './todo-list/todo-list.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskCompletionModule } from './task-completion/task-completion.module';
 import { PiholeModule } from './pihole/pihole.module';
+import { DayEvaluationService } from './day-evaluation/day-evaluation.service';
+import { DayEvaluationModule } from './day-evaluation/day-evaluation.module';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { PiholeModule } from './pihole/pihole.module';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => config.get(ENV_VARIABLES.database),
       inject: [ConfigService],
-    }), TodoListModule, TaskCompletionModule, PiholeModule],
+    }), TodoListModule, TaskCompletionModule, PiholeModule, DayEvaluationModule],
   controllers: [AppController],
   providers: [AppService],
 })

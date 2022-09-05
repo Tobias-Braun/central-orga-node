@@ -11,6 +11,8 @@ export const blockDomains = [
     "www.instagram.com",
     "reddit.com",
     "www.reddit.com",
+    "api.twitter.com",
+    "tpop-api.twitter.com",
 ];
 
 export const domainRegex = /^[A-Za-z0-9\.]*$/

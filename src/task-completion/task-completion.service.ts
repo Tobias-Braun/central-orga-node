@@ -13,13 +13,13 @@ export class TaskCompletionService {
 
     constructor(private readonly todoListService: TodoListService, private readonly piholeService: PiholeService, private readonly configService: ConfigService) { }
 
-    @Cron('0 * * * * * ')
+    @Cron('0 6 * * * ')
     savePlannedTodoListForToday() {
         this.logger.log("getting planned todo list for today");
         this.todoListService.findForToday();
     }
 
-    @Cron('40 * * * * *')
+    @Cron('55 23 * * *')
     async checkDifferenceBetweenPlannedAndCompletedTasks() {
         this.logger.log("checking the difference between planned and completed tasks");
         let difference = await this.todoListService.getDifferenceForToday();
