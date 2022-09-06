@@ -50,19 +50,20 @@ export class TaskCompletionService {
 
     @Cron('0 8 * * *')
     async runAddBlockCheck() {
-        this.logger.log("not all tasks completed, initiating entertainment block");
+        this.logger.log("Checking if sites should be blocked for today");
         let yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         let yesterdayString = yesterday.toISOString().slice(0, 10);
         try {
             let dayEvaluation = await this.dayEvaluationService.getDayEvaluationForDateString(yesterdayString);
             if (dayEvaluation.shouldActivateBlocking) {
+                this.logger.log("not all tasks completed, initiating entertainment block");
                 await this.piholeService.activateBlockList();
                 this.blockingStatusService.updateBlockingStatus(BlockingStatus.ON);
                 this.scheduleRemovePiholeBlock(dayEvaluation.blockTimeInMs);
+            } else {
+                this.logger.log("All tasks completed, no blocking necessary");
             }
-
-
         } catch (error) {
             this.logger.error("cant get day evaluation for yesterday, quitting evaluation without block, error: " + error);
         }

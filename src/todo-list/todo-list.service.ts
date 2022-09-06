@@ -25,7 +25,7 @@ export class TodoListService {
         this.logger.log("Trying to fetch current days todo list from todoist")
         try {
             let fromTodoist = await this.todoistService.getTodoListForDateString(dateString);
-            this.logger.log("fetched from todoist: " + JSON.stringify(fromTodoist));
+            this.logger.log(`Tasks for ${fromTodoist.dateString} fetched from Todoist: [${fromTodoist.todoListItems.map(item => item.name).toString()}]`);
             let existingEntry = await this.todoListRepository.findOneBy({ dateString: fromTodoist.dateString });
             if (existingEntry !== null) {
                 // update entry
