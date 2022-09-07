@@ -39,11 +39,11 @@ export class PiholeService {
     }
 
     private addToBlockListCommand(domain: string) {
-        return `/bin/sh pihole -b "${domain}"`
+        return `/bin/sh -c "pihole -b ${domain}"`
     }
 
     private removeFromBlockList(domain: string) {
-        return `/bin/sh pihole -b -d "${domain}"`
+        return `/bin/sh -c "pihole -b -d "${domain}"`
     }
 
     private async runSafe<T>(domain: string, cb: (domain: string) => Promise<T>): Promise<T> {
