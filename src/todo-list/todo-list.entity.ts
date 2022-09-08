@@ -42,3 +42,10 @@ export function convertToDateString(date: Date): string {
 export function currentDateAsDateString(): string {
     return convertToDateString(new Date());
 }
+
+const dateStringRegex = /^\d\d\d\d\-\d\d-\d\d$/
+
+export function validateDateString(input: string): boolean {
+    let res = input.match(dateStringRegex)
+    return res != null;
+}
