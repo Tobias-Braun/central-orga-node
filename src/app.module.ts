@@ -15,6 +15,7 @@ import { DayEvaluationModule } from './day-evaluation/day-evaluation.module';
 import { BlockingStatusModule } from './blocking-status/blocking-status.module';
 import { RouterAdministrationModule } from './router-administration/router-administration.module';
 import { SiteBlockModule } from './site-block/site-block.module';
+import { ApiModule } from './api/api.module';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { SiteBlockModule } from './site-block/site-block.module';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => config.get(ENV_VARIABLES.database),
       inject: [ConfigService],
-    }), TodoListModule, TaskCompletionModule, PiholeModule, DayEvaluationModule, BlockingStatusModule, RouterAdministrationModule, SiteBlockModule],
+    }), TodoListModule, TaskCompletionModule, PiholeModule, DayEvaluationModule, BlockingStatusModule, RouterAdministrationModule, SiteBlockModule, ApiModule],
   controllers: [AppController],
   providers: [AppService],
 })

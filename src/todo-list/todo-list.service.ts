@@ -52,4 +52,8 @@ export class TodoListService {
         return currentTodoList.todoListItems.length - completedItems.length;
     }
 
+    async getPlannedForDateString(dateString: string): Promise<TodoList> {
+        return await this.todoListRepository.findOneBy({ dateString });
+    }
+
 }
