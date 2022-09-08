@@ -15,4 +15,4 @@ export const blockDomains = [
     "tpop-api.twitter.com",
 ];
 
-export const domainRegex = /^[A-Za-z0-9\.]*$/
+export const domainRegex = /^[A-Za-z0-9\.\-]*$/

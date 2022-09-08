@@ -13,6 +13,8 @@ import { PiholeModule } from './pihole/pihole.module';
 import { DayEvaluationService } from './day-evaluation/day-evaluation.service';
 import { DayEvaluationModule } from './day-evaluation/day-evaluation.module';
 import { BlockingStatusModule } from './blocking-status/blocking-status.module';
+import { RouterAdministrationModule } from './router-administration/router-administration.module';
+import { SiteBlockModule } from './site-block/site-block.module';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { BlockingStatusModule } from './blocking-status/blocking-status.module';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => config.get(ENV_VARIABLES.database),
       inject: [ConfigService],
-    }), TodoListModule, TaskCompletionModule, PiholeModule, DayEvaluationModule, BlockingStatusModule],
+    }), TodoListModule, TaskCompletionModule, PiholeModule, DayEvaluationModule, BlockingStatusModule, RouterAdministrationModule, SiteBlockModule],
   controllers: [AppController],
   providers: [AppService],
 })
