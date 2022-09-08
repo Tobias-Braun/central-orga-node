@@ -1,10 +1,9 @@
 const axios = require('axios');
-const appConfig = require('../../dist/config/dev')
+const appConfig = require('../../dist/config/dev').default()
 const login_url = "http://192.168.178.1/login_sid.lua"
 const data_url = "http://192.168.178.1/data.lua"
 const username = "fritz7554"
 const password = appConfig.routerPassword
-
 let config = {
     headers: {
         "Content-Type": "application/x-www-form-urlencoded"
