@@ -3,9 +3,8 @@ import { TodoistService } from './todoist.service';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-    imports: [ConfigModule],
-    providers: [TodoistService],
-    exports: [TodoistService],
+  imports: [ConfigModule],
+  providers: [TodoistService],
+  exports: [TodoistService],
 })
-export class TodoistModule {
-}
+export class TodoistModule {}

@@ -6,6 +6,6 @@ import { ApiController } from './api.controller';
 
 @Module({
   imports: [DayEvaluationModule, BlockingStatusModule, TodoListModule],
-  controllers: [ApiController]
+  controllers: [ApiController],
 })
 export class ApiModule {}

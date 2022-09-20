@@ -1,7 +1,6 @@
-
 export const ENV_VARIABLES = {
-    todoist_token: "todoist_token",
-    database: "database",
-    blockTimePerUncompletedTask: "blockTimePerUncompletedTask",
-    maxBlockTime: "maxBlockTime",
-}
+  todoist_token: 'todoist_token',
+  database: 'database',
+  blockTimePerUncompletedTask: 'blockTimePerUncompletedTask',
+  maxBlockTime: 'maxBlockTime',
+};

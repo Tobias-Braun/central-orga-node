@@ -3,8 +3,5 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RouterAdministrationService {
-
-    constructor(private readonly configService: ConfigService) {}
-
-    
+  constructor(private readonly configService: ConfigService) {}
 }

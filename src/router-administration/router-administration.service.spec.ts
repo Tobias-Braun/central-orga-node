@@ -9,7 +9,9 @@ describe('RouterAdministrationService', () => {
       providers: [RouterAdministrationService],
     }).compile();
 
-    service = module.get<RouterAdministrationService>(RouterAdministrationService);
+    service = module.get<RouterAdministrationService>(
+      RouterAdministrationService,
+    );
   });
 
   it('should be defined', () => {

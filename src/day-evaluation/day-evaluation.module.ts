@@ -4,8 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DayEvaluation } from './day-evaluation.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([DayEvaluation])],
-    providers: [DayEvaluationService],
-    exports: [DayEvaluationService],
+  imports: [TypeOrmModule.forFeature([DayEvaluation])],
+  providers: [DayEvaluationService],
+  exports: [DayEvaluationService],
 })
 export class DayEvaluationModule {}

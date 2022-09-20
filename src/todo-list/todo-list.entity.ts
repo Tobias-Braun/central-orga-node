@@ -1,51 +1,57 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class TodoList {
-    @PrimaryGeneratedColumn()
-    id?: string;
+  @PrimaryGeneratedColumn()
+  id?: string;
 
-    @Column({ type: "date", unique: true })
-    dateString: string;
+  @Column({ type: 'date', unique: true })
+  dateString: string;
 
-    @OneToMany(() => TodoListItem, (todoListItem) => todoListItem.todoList, {
-        cascade: true,
-        eager: true,
-    })
-    todoListItems: TodoListItem[];
+  @OneToMany(() => TodoListItem, (todoListItem) => todoListItem.todoList, {
+    cascade: true,
+    eager: true,
+  })
+  todoListItems: TodoListItem[];
 }
 
 @Entity()
 export class TodoListItem {
+  @PrimaryColumn({ type: 'bigint' })
+  id: string;
 
-    @PrimaryColumn({ type: "bigint" })
-    id: string;
+  @Column()
+  name: string;
 
-    @Column()
-    name: string;
+  @Column({ type: 'bigint' })
+  projectId: string;
 
-    @Column({ type: "bigint" })
-    projectId: string;
-
-    @ManyToOne(() => TodoList, (todoList) => todoList.todoListItems)
-    todoList?: TodoList;
+  @ManyToOne(() => TodoList, (todoList) => todoList.todoListItems)
+  todoList?: TodoList;
 }
 
 export function emptyTodoList(): TodoList {
-    return { dateString: currentDateAsDateString(), todoListItems: [] };
+  return { dateString: currentDateAsDateString(), todoListItems: [] };
 }
 
 export function convertToDateString(date: Date): string {
-    return date.toISOString().slice(0, 10);
+  return date.toISOString().slice(0, 10);
 }
 
 export function currentDateAsDateString(): string {
-    return convertToDateString(new Date());
+  return convertToDateString(new Date());
 }
 
-const dateStringRegex = /^\d\d\d\d\-\d\d-\d\d$/
+const dateStringRegex = /^\d\d\d\d\-\d\d-\d\d$/;
 
 export function validateDateString(input: string): boolean {
-    let res = input.match(dateStringRegex)
-    return res != null;
+  const res = input.match(dateStringRegex);
+  return res != null;
 }

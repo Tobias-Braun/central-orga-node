@@ -5,8 +5,8 @@ import { TodoList, TodoListItem } from './todo-list.entity';
 import { TodoistModule } from '../todoist/todoist.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([TodoList, TodoListItem]), TodoistModule],
-    providers: [TodoListService],
-    exports: [TodoListService],
+  imports: [TypeOrmModule.forFeature([TodoList, TodoListItem]), TodoistModule],
+  providers: [TodoListService],
+  exports: [TodoListService],
 })
-export class TodoListModule { }
+export class TodoListModule {}

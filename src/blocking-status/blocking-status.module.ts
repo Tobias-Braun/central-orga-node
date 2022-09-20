@@ -8,4 +8,4 @@ import { BlockingStatus } from './blocking-status.entity';
   providers: [BlockingStatusService],
   exports: [BlockingStatusService],
 })
-export class BlockingStatusModule { }
+export class BlockingStatusModule {}

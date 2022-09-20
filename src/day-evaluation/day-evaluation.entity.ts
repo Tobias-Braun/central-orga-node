@@ -1,20 +1,19 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class DayEvaluation {
+  @PrimaryGeneratedColumn()
+  id?: number;
 
-    @PrimaryGeneratedColumn()
-    id?: number;
+  @Column({ type: 'date', unique: true })
+  dateString: string;
 
-    @Column({ type: "date", unique: true })
-    dateString: string;
+  @Column()
+  numberOfUncompletedTasks: number;
 
-    @Column()
-    numberOfUncompletedTasks: number;
+  @Column()
+  shouldActivateBlocking: boolean;
 
-    @Column()
-    shouldActivateBlocking: boolean;
-
-    @Column()
-    blockTimeInMs: number;
+  @Column()
+  blockTimeInMs: number;
 }
