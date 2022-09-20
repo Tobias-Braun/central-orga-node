@@ -23,7 +23,7 @@ export class TaskCompletionService {
     private readonly blockingStatusService: BlockingStatusService,
   ) {}
 
-  @Cron('0 6 * * * ')
+  @Cron('15 6 * * * ')
   runPlannedTasksCheck() {
     this.logger.log('getting planned todo list for today');
     const todayString = currentDateAsDateString();
@@ -55,7 +55,16 @@ export class TaskCompletionService {
     }
   }
 
-  @Cron('0 8 * * *')
+  @Cron('0 6 * * *')
+  async addBlock() {
+    this.logger.log('Blocking sites');
+    await this.piholeService.activateBlockList();
+    await this.blockingStatusService.updateBlockingStatus(BlockingStatus.ON);
+    const dayBlockTime = this.configService.get(ENV_VARIABLES.dayBlockTime);
+    await this.scheduleRemovePiholeBlock(dayBlockTime);
+  }
+
+  // @Cron('0 6 * * *')
   async runAddBlockCheck() {
     this.logger.log('Checking if sites should be blocked for today');
     const yesterday = new Date();
